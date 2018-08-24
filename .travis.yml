@@ -1,0 +1,17 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t qvvg/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run qvvg/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t qvvg/multi-client ./client
+  - docker build -t qvvg/multi-nginx ./nginx
+  - docker build -t qvvg/multi-server ./server
+  - docker build -t qvvg/multi-worker ./worker
+  # push images to dockerhub
+  ## Login to docker CLI
