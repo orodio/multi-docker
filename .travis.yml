@@ -9,9 +9,15 @@ script:
   - docker run qvvg/react-test npm test -- --coverage
 
 after_success:
+  # build images
   - docker build -t qvvg/multi-client ./client
   - docker build -t qvvg/multi-nginx ./nginx
   - docker build -t qvvg/multi-server ./server
   - docker build -t qvvg/multi-worker ./worker
+  # Login to docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # push images to dockerhub
-  ## Login to docker CLI
+  - docker push qvvg/multi-client
+  - docker push qvvg/multi-nginx
+  - docker push qvvg/multi-server
+  - docker push qvvg/multi-worker
